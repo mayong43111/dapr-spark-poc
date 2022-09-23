@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcs-dapr-poc-frontend
+  namespace: spark-namespace
+  labels:
+    app: mcs-dapr-poc-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcs-dapr-poc-frontend-image
+  template:
+    metadata:
+      labels:
+        app: mcs-dapr-poc-frontend-image
+    spec:
+      containers:
+      - name: mcs-dapr-poc-frontend-image
+        image: daprdemo.azurecr.io/mcs-dapr-poc-frontend:3111349226
+        ports:
+        - containerPort: 80
+          protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcs-dapr-poc-frontend
+  namespace: spark-namespace
+spec:
+  selector:
+    app: mcs-dapr-poc-frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
