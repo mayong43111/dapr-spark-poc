@@ -3,20 +3,18 @@ kind: Deployment
 metadata:
   name: mcs-dapr-poc-frontend
   namespace: spark-namespace
-  labels:
-    app: mcs-dapr-poc-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mcs-dapr-poc-frontend-image
+      app: mcs-dapr-poc-frontend
   template:
     metadata:
       labels:
-        app: mcs-dapr-poc-frontend-image
+        app: mcs-dapr-poc-frontend
     spec:
       containers:
-      - name: mcs-dapr-poc-frontend
+      - name: mcs-dapr-poc-frontend-image
         image: daprdemo.azurecr.io/mcs-dapr-poc-frontend:3111349226
         ports:
         - containerPort: 80
