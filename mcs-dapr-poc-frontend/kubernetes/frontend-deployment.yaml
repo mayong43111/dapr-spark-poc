@@ -16,7 +16,7 @@ spec:
         app: mcs-dapr-poc-frontend-image
     spec:
       containers:
-      - name: mcs-dapr-poc-frontend-image
+      - name: mcs-dapr-poc-frontend
         image: daprdemo.azurecr.io/mcs-dapr-poc-frontend:3111349226
         ports:
         - containerPort: 80
