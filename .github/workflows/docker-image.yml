@@ -14,7 +14,7 @@ jobs:
     
     - name: Build the Docker image
       working-directory: mcs-dapr-poc-frontend
-      run: docker build . --file Dockerfile --tag daprdemo.azurecr.io\mcs-dapr-poc-frontend:${{ github.run_id }}
+      run: docker build . --file Dockerfile --tag daprdemo.azurecr.io/mcs-dapr-poc-frontend:${{ github.run_id }}
       
     - name: Login Azure
       uses: azure/login@v1
@@ -24,5 +24,5 @@ jobs:
     - name: Login Azure ACR & push image
       run: |
         az acr login --name daprdemo
-        docker push daprdemo.azurecr.io\mcs-dapr-poc-frontend:${{ github.run_id }}
+        docker push daprdemo.azurecr.io/mcs-dapr-poc-frontend:${{ github.run_id }}
         
