@@ -108,7 +108,7 @@ metadata:
     prometheus.io/scrape: 'true'
 spec:
   selector:
-    app: prometheus-core
+    app: prometheus
   ports:
   - protocol: TCP
     port: 9090
