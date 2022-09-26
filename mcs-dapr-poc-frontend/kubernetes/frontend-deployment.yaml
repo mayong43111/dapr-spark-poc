@@ -4,7 +4,7 @@ metadata:
   name: mcs-dapr-poc-frontend
   namespace: spark-namespace
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mcs-dapr-poc-frontend
