@@ -1,0 +1,115 @@
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+- kind: ServiceAccount
+  name: prometheus-aks
+  namespace: core-monitor
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/proxy
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+  - configmaps
+  verbs: ["get"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-aks
+  namespace: core-monitor
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-core
+  namespace: core-monitor
+data:
+  prometheus.yaml: |
+    global:
+      scrape_interval: 15s
+      scrape_timeout: 15s
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-core
+  namespace: core-monitor
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      name: prometheus-main
+      labels:
+        app: prometheus
+    spec:
+      serviceAccountName: prometheus-aks
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.4.3
+        command:
+          - "/bin/prometheus"
+        args:
+          - '--storage.tsdb.retention=30d'
+          - '--config.file=/etc/prometheus/prometheus.yaml'
+          - '--web.enable-lifecycle'
+        ports:
+        - containerPort: 9090
+          protocol: TCP
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/prometheus
+      volumes:
+      - name: config-volume
+        configMap:
+          name: prometheus-core
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: core-monitor
+  labels:
+    app: prometheus
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  selector:
+    app: prometheus-core
+  ports:
+  - protocol: TCP
+    port: 9090
+    targetPort: 9090
