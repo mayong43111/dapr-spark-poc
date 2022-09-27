@@ -12,5 +12,6 @@ mountOptions:
   - mfsymlinks
   - cache=strict
   - actimeo=30
+  - nobrl
 parameters:
   skuName: Standard_LRS

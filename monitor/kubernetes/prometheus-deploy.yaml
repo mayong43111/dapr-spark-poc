@@ -42,7 +42,6 @@ metadata:
   namespace: core-monitor
 
 ---
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -76,8 +75,8 @@ data:
         - source_labels: [__meta_kubernetes_node_name]
           regex: 'virtual-node-aci-linux'
           action: drop
----
 
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -114,7 +113,7 @@ spec:
       serviceAccountName: prometheus-aks
       containers:
       - name: prometheus
-        image: prom/prometheus:v2.4.3
+        image: prom/prometheus:v2.38.0
         command:
           - "/bin/prometheus"
         args:
