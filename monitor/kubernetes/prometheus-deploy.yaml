@@ -66,11 +66,31 @@ data:
       # 采集node exporter监控数据
       - job_name: 'node-exporter'
         kubernetes_sd_configs:
-        - role: endpoints
+        - role: node
         relabel_configs:
-        - source_labels: [__meta_kubernetes_endpoints_name]
-          regex: 'prometheus-node-exporter'
-          action: keep
+        - source_labels: [__address__]
+          action: replace
+          regex: ([^:]+):.*
+          replacement: $1:9100
+          target_label: __address__
+        - source_labels: [__meta_kubernetes_node_name]
+          regex: 'virtual-node-aci-linux'
+          action: drop
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-data
+  namespace: core-monitor
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: standard-lrs-azurefile
+  resources:
+    requests:
+      storage: 500Gi
+
 ---
 
 apiVersion: apps/v1
@@ -100,6 +120,7 @@ spec:
         args:
           - '--storage.tsdb.retention=30d'
           - '--config.file=/etc/prometheus/prometheus.yaml'
+          - '--storage.tsdb.path=/etc/prometheus-data'
           - '--web.enable-lifecycle'
         ports:
         - containerPort: 9090
@@ -107,10 +128,15 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /etc/prometheus
+        - name: data-volume
+          mountPath: /etc/prometheus-data
       volumes:
       - name: config-volume
         configMap:
           name: prometheus-core
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: prometheus-data
 
 ---
 

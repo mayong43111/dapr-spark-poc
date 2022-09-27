@@ -19,12 +19,14 @@ spec:
     spec:
       hostPID: true
       hostIPC: true
+      hostNetwork: true
       containers:
       - image: prom/node-exporter:v1.3.1
         name: prometheus-node-exporter
         ports:
         - protocol: TCP
           containerPort: 9100
+          hostPort: 9100
         volumeMounts:
         - mountPath: /host/sys
           mountPropagation: HostToContainer
@@ -41,24 +43,3 @@ spec:
       - hostPath:
           path: /
         name: root
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-      prometheus.io/scrape: 'true'
-      prometheus.io/port:   '9100'
-  name: prometheus-node-exporter
-  namespace: core-monitor
-  labels:
-    app: prometheus-node-exporter
-spec:
-  clusterIP: None
-  ports:
-    - name: prometheus-node-exporter
-      port: 9100
-      protocol: TCP
-  selector:
-    app: prometheus-node-exporter
-  type: ClusterIP
