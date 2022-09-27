@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-core
+  namespace: core-monitor
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      name: prometheus-main
+      labels:
+        app: prometheus
+    spec:
+      serviceAccountName: prometheus-aks
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.38.0
+        command:
+          - "/bin/prometheus"
+        args:
+          - '--storage.tsdb.retention=30d'
+          - '--config.file=/etc/prometheus/prometheus.yaml'
+          - '--storage.tsdb.path=/etc/prometheus-data'
+          - '--web.enable-lifecycle'
+        ports:
+        - containerPort: 9090
+          protocol: TCP
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/prometheus
+        - name: data-volume
+          mountPath: /etc/prometheus-data
+      volumes:
+      - name: config-volume
+        configMap:
+          name: prometheus-core
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: prometheus-data
