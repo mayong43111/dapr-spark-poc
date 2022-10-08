@@ -1,0 +1,18 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: logs-kibana-cluster
+  namespace: core-monitor
+spec:
+  version: 8.4.3
+  count: 1
+  elasticsearchRef:
+    name: logs-es-cluster
+    namespace: core-monitor
+  http:
+    service:
+      spec:
+        type: LoadBalancer
+    tls:
+      selfSignedCertificate:
+        disabled: true
