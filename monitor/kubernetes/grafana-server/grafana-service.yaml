@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: core-monitor
+spec:
+  ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: http-grafana
+
+  type: LoadBalancer
+  selector:
+    app: grafana

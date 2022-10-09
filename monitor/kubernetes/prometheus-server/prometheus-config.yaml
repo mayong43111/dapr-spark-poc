@@ -88,9 +88,4 @@ data:
       - job_name: 'kube-state-exporter'
         static_configs:
         - targets: ['kube-state-metrics:8080']
-
-      # 采集 Prometheus 自己的监控数据
-      - job_name: 'prometheus'
-        static_configs:
-        - targets: ['prometheus:9090']
       

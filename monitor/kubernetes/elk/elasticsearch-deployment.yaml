@@ -5,10 +5,6 @@ metadata:
   namespace: core-monitor
 spec:
   version: 8.4.3
-  http:
-    service:
-      spec:
-        type: LoadBalancer
   nodeSets:
   - name: default
     count: 1
@@ -20,8 +16,8 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 500Gi
-        storageClassName: standard-lrs-azurefile
+            storage: 50Gi
+        storageClassName: managed-csi
     config:
       node.store.allow_mmap: false
     podTemplate:

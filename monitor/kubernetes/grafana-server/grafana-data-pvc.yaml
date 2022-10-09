@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-data
+  namespace: core-monitor
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: standard-lrs-azurefile
+  resources:
+    requests:
+      storage: 500Gi
